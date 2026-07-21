@@ -714,7 +714,7 @@ if(window.matchMedia('(hover: hover) and (pointer: fine)').matches){
 }
 
 // ---------------- Contact form → Google Apps Script ----------------
-const NOVA_ENDPOINT = "https://script.google.com/macros/s/AKfycbzcJk132xSxjQTYThTzqnRwGAgRiElHCcvyX-2Dgy18o4MKnW6dR5kuk5FITwBv-UPI0Q/exec";
+const NOVA_ENDPOINT = "https://script.google.com/macros/s/AKfycbycA4se2MfT2AOTo_cBixNk7ZcbM_mfdSWViezeZGbdROA2rtJ-wtuhWPET68mszCi5Vw/exec";
 
 function showToast(message, type = "success") {
   const toast = document.getElementById("toast");
@@ -796,13 +796,12 @@ if (inquiryForm) {
 
         method: "POST",
 
-        mode: "no-cors",
 
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
+                    "Content-Type": "application/json"
+                 },
 
-        body: new URLSearchParams(formData)
+         body: JSON.stringify(formData)
 
       });
 
