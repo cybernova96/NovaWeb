@@ -707,69 +707,137 @@ if(window.matchMedia('(hover: hover) and (pointer: fine)').matches){
 }
 
 // ---------------- Contact form → Google Apps Script ----------------
-const NOVA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzZfRWlO9Mz6ZcVDQxRev9S1Tw80CmNI2-DzeES547-yJtN86XBU5ZcfWGfl9GYxQwSNg/exec';
+const NOVA_ENDPOINT = "https://script.google.com/macros/s/AKfycbzcJk132xSxjQTYThTzqnRwGAgRiElHCcvyX-2Dgy18o4MKnW6dR5kuk5FITwBv-UPI0Q/exec";
 
-function showToast(message, type = 'success') {
-  const toast = document.getElementById('toast');
-  const toastMessage = document.getElementById('toastMessage');
-  const icon = toast.querySelector('.toast-ic');
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  const toastMessage = document.getElementById("toastMessage");
+  const icon = toast.querySelector(".toast-ic");
 
-  toast.classList.remove('success', 'error');
+  toast.classList.remove("success", "error");
   toast.classList.add(type);
-  toastMessage.textContent = message;
-  icon.innerHTML = type === 'success'
-    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 12.6l5.2 5.4L20 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  toast.classList.add('show');
-  clearTimeout(showToast._timer);
-  showToast._timer = setTimeout(() => toast.classList.remove('show'), 4500);
+  toastMessage.textContent = message;
+
+  icon.innerHTML = type === "success"
+    ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+        <path d="M4 12.6l5.2 5.4L20 6" 
+        stroke="#22c55e" stroke-width="2.5" 
+        stroke-linecap="round" stroke-linejoin="round"/>
+       </svg>`
+    : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6l12 12M18 6L6 18" 
+        stroke="#ef4444" stroke-width="2.5" 
+        stroke-linecap="round" stroke-linejoin="round"/>
+       </svg>`;
+
+  toast.classList.add("show");
+
+  clearTimeout(showToast.timer);
+
+  showToast.timer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 4000);
 }
 
-const inquiryForm = document.getElementById('inquiryForm');
+
+const inquiryForm = document.getElementById("inquiryForm");
+
 
 if (inquiryForm) {
-  inquiryForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
 
-    const submitBtn = document.getElementById('inquirySubmitBtn');
-    const originalLabel = submitBtn.textContent;
+  inquiryForm.addEventListener("submit", async function(e) {
 
-    const payload = {
-      name: inquiryForm.name.value.trim(),
-      businessType: inquiryForm.businessType.value.trim(),
-      businessName: inquiryForm.businessName.value.trim(),
-      website: inquiryForm.website.value.trim(),
-      description: inquiryForm.description.value.trim(),
-      contact: inquiryForm.contact.value.trim(),
+    e.preventDefault();
+
+
+    const submitBtn = document.getElementById("inquirySubmitBtn");
+
+    const originalText = submitBtn.textContent;
+
+
+    const formData = {
+
+      name: inquiryForm.querySelector('[name="name"]').value,
+
+      businessType:
+      inquiryForm.querySelector('[name="businessType"]').value,
+
+      businessName:
+      inquiryForm.querySelector('[name="businessName"]').value,
+
+      website:
+      inquiryForm.querySelector('[name="website"]').value,
+
+      description:
+      inquiryForm.querySelector('[name="description"]').value,
+
+      contact:
+      inquiryForm.querySelector('[name="contact"]').value
+
     };
 
+
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
+    submitBtn.textContent = "Sending...";
+
 
     try {
-      const response = await fetch(NOVA_ENDPOINT, {
-        method: 'POST',
+
+
+      await fetch(NOVA_ENDPOINT, {
+
+        method: "POST",
+
+        mode: "no-cors",
+
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: JSON.stringify(payload),
+
+        body: new URLSearchParams(formData)
+
       });
 
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
 
-      showToast('Thanks! Your inquiry has been sent.', 'success');
+      showToast(
+        "Thanks! Your inquiry has been sent.",
+        "success"
+      );
+
+
       inquiryForm.reset();
-    } catch (error) {
-      console.error('NOVA inquiry form error:', error);
-      showToast('Something went wrong. Please try again.', 'error');
+
+
+
+    } catch(error) {
+
+
+      console.error(
+        "Form error:",
+        error
+      );
+
+
+      showToast(
+        "Something went wrong. Try again.",
+        "error"
+      );
+
+
     } finally {
+
+
       submitBtn.disabled = false;
-      submitBtn.textContent = originalLabel;
+
+      submitBtn.textContent = originalText;
+
+
     }
+
+
   });
+
 }
 </script>
 </body>
